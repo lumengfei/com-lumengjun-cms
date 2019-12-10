@@ -34,11 +34,11 @@
 	<dependencies>
 	
 		<!-- 引入工具类 -->
-		<dependency>
+		<!-- <dependency>
 			<groupId>com.lumengjun.cms</groupId>
 			<artifactId>lumengjun-cms-utils</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
+		</dependency> -->
 		<!-- spring 及springMVC -->
 		<dependency>
 			<groupId>org.springframework</groupId>
