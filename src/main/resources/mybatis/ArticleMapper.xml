@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.lumengjun.dao.ArticleMapper">
+  
+  <resultMap type="article" id="articleMapper">
+		<result property="channelId" column="channel_id"/>
+		<result property="categoryId" column="category_id"/>
+		<association property="channel" column="channel_id" javaType="com.e1708.cms.entity.Channel" 
+		   select="findChannel"></association>
+		<association property="category" column="category_id" javaType="com.e1708.cms.entity.Category" 
+		   select="findCatigory"></association>
+	</resultMap>
+		
+	<select id="listByUser" resultMap="articleMapper">
+		SELECT id,title,channel_id,category_id , created,status 
+		  FROM cms_article
+		  WHERE user_id = #{value} AND deleted=0
+		  ORDER BY id DESC  
+	</select>
+  
+  </mapper>
