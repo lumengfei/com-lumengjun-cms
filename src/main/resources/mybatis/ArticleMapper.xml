@@ -7,9 +7,13 @@
   <resultMap type="article" id="articleMapper">
 		<result property="channelId" column="channel_id"/>
 		<result property="categoryId" column="category_id"/>
-		<association property="channel" column="channel_id" javaType="com.e1708.cms.entity.Channel" 
+		<result property="userId" column="user_id"/>
+		<result property="content" column="content"/>
+		<result property="picture" column="picture"/>
+		
+		<association property="channel" column="channel_id" javaType="com.lumengjun.entity.Channel" 
 		   select="findChannel"></association>
-		<association property="category" column="category_id" javaType="com.e1708.cms.entity.Category" 
+		<association property="category" column="category_id" javaType="com.lumengjun.entity.Category" 
 		   select="findCatigory"></association>
 	</resultMap>
 		
@@ -19,5 +23,22 @@
 		  WHERE user_id = #{value} AND deleted=0
 		  ORDER BY id DESC  
 	</select>
+	
+	
+	<!-- 获取频道 -->
+	<select id="findChannel" resultType="channel">
+		SELECT id,name FROM cms_channel WHERE id=#{value}
+	</select>
+	
+	<!-- 获取分类 -->
+	<select id="findCatigory" resultType="category">
+		SELECT id,name FROM cms_category WHERE id=#{value}
+	</select>
+  
+  
+  <select id="getArticleId"  resultMap="articleMapper">
+  	SELECT id,title,channel_id,category_id,user_id,content,picture, created,status 
+		  FROM cms_article where id=#{value}
+  </select>
   
   </mapper>

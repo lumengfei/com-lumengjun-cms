@@ -27,7 +27,7 @@
 				<h3 class="form-title">登入你的帐户</h3>				
 					<div class="col-sm-9 col-md-9">					
 						<div class="form-group">	<!-- placeholder="用户名" -->					
-							<i class="fa fa-user fa-lg">用户名</i><br>						
+							<i class="fa fa-user fa-lg">用户名</i>${eror}<br>						
 							<form:input   path="username" />
 							<form:errors path="username"></form:errors>
 						</div>					

@@ -93,15 +93,18 @@
 			style="margin-top: 20px; border-right: solid 2px">
 			<!-- 左侧的菜单 -->
 			<ul class="nav flex-column mymenuselected">
-				<li class="nav-item"><a class="nav-link active" href="#"
-					onclick="showWork($(this),'/article/articles')">我的文章</a></li>
-				<li class="nav-item"><a class="nav-link" href="#"
-					onclick="showWork($(this),'/article/postArticle')">发表文章</a></li>
-				<li class="nav-item"><a class="nav-link" href="#"
-					onclick="showWork($(this),'/article/comments')">我的评论</a></li>
-				<li class="nav-item"><a class="nav-link disabled" href="#"
-					tabindex="-1" aria-disabled="true"
-					onclick="showWork('/user/personal')">个人设置</a></li>
+				<li class="nav-item ">
+				    <a  class="nav-link active" href="#" onclick="showWork($(this),'/admin/article?status=0&page=1')" >文章管理</a>
+				  </li>
+				  <li class="nav-item">
+				    <a class="nav-link" href="#" onclick="showWork($(this),'/admin/comment')" >评论管理</a>
+				  </li>
+				  <li class="nav-item">
+				    <a class="nav-link" href="#" onclick="showWork($(this),'/admin/link')" >友情链接管理</a>
+				  </li>
+				  <li class="nav-item">
+				    <a class="nav-link" href="#" onclick="showWork($(this),'/admin/user')" >用户管理管理</a>
+				  </li>
 			</ul>
 		</div>
 

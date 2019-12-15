@@ -1,21 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-    <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-    <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-    <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-	<%String path = request.getContextPath();%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
-<link rel="stylesheet" type="text/css" href="/resource/css/css.css">
-<script type="text/javascript" src="/resource/js/jquery-3.4.1.min.js"></script>
-<script type="text/javascript" src="/resource/bootstrap/js/bootstrap.js"></script>
-</head>
-<body>
- 	<table class="table">
-         <thead>
+  
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<!-- <div class="container-fluid"> -->
+	<table class="table">
+		<!-- articlePage -->
+	
+	  <thead>
           <tr>
             <th>id</th>
             <th>标题</th>
@@ -52,5 +44,62 @@
         	</c:forEach>
         </tbody>
       </table>
-</body>
-</html>
+      
+      <nav aria-label="Page navigation example">
+		  <ul class="pagination justify-content-center">
+		    <li class="page-item">
+		      <a class="page-link" href="#"  onclick="gopage(1)">首页</a>
+		    </li>
+		    <li class="page-item">
+		    <a class="page-link" href="#" onclick="gopage(${articlePage.prePage==0?1:articlePage.prePage})">上一页</a>
+		    </li>
+		   	<c:forEach begin="1" end="${articlePage.pages}" varStatus="i">
+		   		<li class="page-item"><a class="page-link" href="#" onclick="gopage(${i.index})">${i.index}</a></li>
+		   	</c:forEach>
+		    
+		   
+		   <li class="page-item">
+		   <a class="page-link" href="#" onclick="gopage(${articlePage.nextPage==0?articlePage.pages:articlePage.nextPage})">下一页</a>
+		   </li>
+		    <li class="page-item">
+		      <a class="page-link" href="#" onclick="gopage(${articlePage.pages})">尾页</a>
+		    </li>
+		  </ul>
+		</nav>
+	
+<!-- </div>     -->
+<script>
+	function del(id){
+		/* alert(id) */
+		if(!confirm("您确认删除么？"))
+			return;
+		
+		$.post('/article/deletearticle',{id:id},
+				function(data){
+					if(data==true){
+						alert("刪除成功")
+						//location.href="#"
+						$("#workcontent").load("/article/articles");
+					}else{
+						alert("刪除失敗")
+					}
+					
+		},"json"				
+		)
+	}
+	
+	function update(id){
+		$("#workcontent").load("/article/update?id="+id);
+	}
+	
+	/**
+	* 翻页
+	*/
+	function gopage(page){
+		$("#workcontent").load("/article/articles?page="+page);
+	}
+	
+</script>
+
+    
+    
