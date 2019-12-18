@@ -62,4 +62,6 @@ public interface ArticleService {
 	 */
 	int updateArticle(Article article);
 
+	
+
 }

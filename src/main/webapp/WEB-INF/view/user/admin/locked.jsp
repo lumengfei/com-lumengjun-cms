@@ -94,16 +94,16 @@
 			<!-- 左侧的菜单 -->
 			<ul class="nav flex-column mymenuselected">
 				<li class="nav-item ">
-				    <a  class="nav-link active" href="#" onclick="showWork($(this),'/admin/article?status=0&page=1')" >文章管理</a>
+				    <a  class="nav-link active" href="#" onclick="showWork($(this),'/locked/article?status=0&page=1')" >文章管理</a>
 				  </li>
 				  <li class="nav-item">
-				    <a class="nav-link" href="#" onclick="showWork($(this),'/admin/comment')" >评论管理</a>
+				    <a class="nav-link" href="#" onclick="showWork($(this),'/locked/comment')" >评论管理</a>
 				  </li>
 				  <li class="nav-item">
-				    <a class="nav-link" href="#" onclick="showWork($(this),'/admin/link')" >友情链接管理</a>
+				    <a class="nav-link" href="#" onclick="showWork($(this),'/locked/link')" >友情链接管理</a>
 				  </li>
 				  <li class="nav-item">
-				    <a class="nav-link" href="#" onclick="showWork($(this),'/admin/user')" >用户管理管理</a>
+				    <a class="nav-link" href="#" onclick="showWork($(this),'/locked/user')" >用户管理管理</a>
 				  </li>
 			</ul>
 		</div>

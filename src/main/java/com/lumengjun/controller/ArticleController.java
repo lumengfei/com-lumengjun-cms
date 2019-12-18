@@ -41,6 +41,9 @@ import javax.servlet.http.HttpServletRequest;
 
 
 
+
+
+
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -67,9 +70,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 
+
+
+
 import com.github.pagehelper.PageInfo;
 import com.lumengjun.cms.utils.FileUtils;
 import com.lumengjun.cms.utils.HtmlUtils;
+import com.lumengjun.common.CmsError;
+import com.lumengjun.common.CmsMessage;
 import com.lumengjun.common.FileResult;
 import com.lumengjun.entity.Article;
 import com.lumengjun.entity.Category;
@@ -96,6 +104,29 @@ public class ArticleController {
 	
 	@Autowired
 	ArticleService articleService;
+	
+	/**
+	 * 
+	 */
+	@RequestMapping("getDetail")
+	@ResponseBody
+	public CmsMessage getDetail(int id) {
+		if(id<=0) {
+			
+		}
+		// 获取文章详情
+		Article article = articleService.getArticleId(id);
+		System.out.println(article);
+		// 不存在
+		if(article==null)
+			return new CmsMessage(CmsError.NOT_EXIST, "文章不存在",null);
+		//return new CmsMessage(2, "文章不存在",null);
+		
+		// 返回数据
+		//return new CmsMessage(1,"",article); 
+		return new CmsMessage(CmsError.SUCCESS,"",article); 
+		
+	}
 	
 	/**
 	 * 

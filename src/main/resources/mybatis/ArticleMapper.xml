@@ -15,6 +15,8 @@
 		   select="findChannel"></association>
 		<association property="category" column="category_id" javaType="com.lumengjun.entity.Category" 
 		   select="findCatigory"></association>
+		   <association property="user" column="user_id" javaType="com.lumengjun.entity.User"  
+		   select="findUserById"/>
 	</resultMap>
 		
 	<select id="listByUser" resultMap="articleMapper">
@@ -25,6 +27,9 @@
 	</select>
 	
 	
+	<select id="findUserById" resultType="user">
+		SELECT id,username FROM cms_user WHERE id=#{value}
+	</select>
 	<!-- 获取频道 -->
 	<select id="findChannel" resultType="channel">
 		SELECT id,name FROM cms_channel WHERE id=#{value}
@@ -35,10 +40,8 @@
 		SELECT id,name FROM cms_category WHERE id=#{value}
 	</select>
   
-  
-  <select id="getArticleId"  resultMap="articleMapper">
-  	SELECT id,title,channel_id,category_id,user_id,content,picture, created,status 
-		  FROM cms_article where id=#{value}
-  </select>
+  <select id="getArticleId" resultMap="articleMapper">
+		SELECT * FROM cms_article WHERE id=#{value} AND deleted=0
+	</select>
   
   </mapper>
