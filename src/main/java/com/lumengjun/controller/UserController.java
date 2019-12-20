@@ -2,9 +2,11 @@ package com.lumengjun.controller;
 
 
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
 import javax.validation.Valid;
+
+
 
 
 
@@ -27,15 +29,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 
 import org.springframework.web.bind.annotation.RequestMethod;
-
 import org.springframework.web.bind.annotation.ResponseBody;
 
 
-import com.lumengjun.cms.utils.StringUtils;
 
+
+import com.lumengjun.cms.utils.StringUtils;
+import com.lumengjun.common.CmsMessage;
 import com.lumengjun.entity.User;
 import com.lumengjun.momme.Cms;
-
 import com.lumengjun.service.UserService;
 /**
  * 
@@ -55,9 +57,14 @@ public class UserController {
 	
 	
 	
-	
-	
-	
+	/**
+	 * index
+	 */
+	@RequestMapping("index")
+	public String index(){
+		
+		return "redirect:/";
+	}
 	
 	
 	
@@ -175,6 +182,10 @@ public class UserController {
 	}
 	
 	
+	
+	
+	
+	
 	/**
 	 * exit
 	 */
@@ -183,5 +194,17 @@ public class UserController {
 		session.removeAttribute(Cms.USER);
 		return "redirect:/user/login";
 	}
-	
+	/**
+	 * tologin
+	 */
+	@RequestMapping("/tologin")
+	@ResponseBody
+	public CmsMessage tologin(String name,String pwd,HttpServletRequest request){
+		User user = ser.getToUser(name,pwd);
+		if(user==null){
+			return  new CmsMessage(Cms.NOT_EXIST, "用户名或密码错误", "");
+		}
+		request.getSession().setAttribute(Cms.USER, user);
+		 return  new CmsMessage(Cms.SUCCESS, "", "登录成功");
+	}
 }

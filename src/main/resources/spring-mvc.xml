@@ -31,6 +31,7 @@
 			<mvc:exclude-mapping path="/user/register"/>
 			<mvc:exclude-mapping path="/user/checkname"/>
 			<mvc:exclude-mapping path="/resource/**"/>
+			<mvc:exclude-mapping path="/index/**"/>
 			<bean class="com.lumengjun.web.CmsInterceptor"></bean>
 		</mvc:interceptor>
 	</mvc:interceptors> -->

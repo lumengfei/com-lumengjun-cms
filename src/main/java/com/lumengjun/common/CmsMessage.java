@@ -9,6 +9,8 @@ public class CmsMessage implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	
+	
 	int code;  // 1  是成功   2 其他原因失败
 	String error;// 失败的具体的原因
 	Object data; // 成功的情况下返回的数据内容

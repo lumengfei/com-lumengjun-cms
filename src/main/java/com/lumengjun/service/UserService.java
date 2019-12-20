@@ -22,4 +22,12 @@ public interface UserService {
 
 	User getUser(@Valid User user);
 
+	/**
+	 * 
+	 * @param name
+	 * @param pwd
+	 * @return
+	 */
+	User getToUser(String name, String pwd);
+
 }

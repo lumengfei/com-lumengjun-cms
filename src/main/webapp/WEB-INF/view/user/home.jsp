@@ -76,10 +76,10 @@
 		<div>
 			<ul class="nav">
 				<li class="nav-item nav-link"><img width="35px" height="35px"
-					src="/resource/images/guest.jpg"></li>
+					src="/pic/${user.url}"></li>
 
-				<li class="nav-item nav-link">${user.username}</li>
-				<li class="nav-item nav-link">c</li>
+				<li class="nav-item nav-link"><font color="red">${user.nickname==''?user.username:user.nickname}</font></li>
+				<li class="nav-item nav-link"><a href="/user/index">进入主页面</a></li>
 				<li class="nav-item nav-link"><a href="/user/exit"><font
 						color="red">退出</font></a></li>
 			</ul>
@@ -98,7 +98,7 @@
 				<li class="nav-item"><a class="nav-link" href="#"
 					onclick="showWork($(this),'/article/postArticle')">发表文章</a></li>
 				<li class="nav-item"><a class="nav-link" href="#"
-					onclick="showWork($(this),'/article/comments')">我的评论</a></li>
+					onclick="showWork($(this),'/article/comment')">我的评论</a></li>
 				<li class="nav-item"><a class="nav-link disabled" href="#"
 					tabindex="-1" aria-disabled="true"
 					onclick="showWork('/user/personal')">个人设置</a></li>

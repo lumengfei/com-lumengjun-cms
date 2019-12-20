@@ -1,6 +1,7 @@
 package com.lumengjun.dao;
 
 import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import com.lumengjun.entity.User;
@@ -26,5 +27,8 @@ public interface UserMapper {
 
 	@Select("SELECT * FROM cms_user WHERE username=#{username} and password=#{password} LIMIT 1")
 	User setPassword(User user);
+
+	@Select("SELECT * FROM cms_user WHERE username=#{name} and password=#{pwwd} LIMIT 1")
+	User getToUser(@Param("name")String name,@Param("pwwd") String pwwd);
 
 }

@@ -53,9 +53,21 @@
 		    <li class="page-item">
 		    <a class="page-link" href="#" onclick="gopage(${articlePage.prePage==0?1:articlePage.prePage})">上一页</a>
 		    </li>
-		   	<c:forEach begin="1" end="${articlePage.pages}" varStatus="i">
+		    <c:forEach begin="${articlePage.pageNum-2>=1?articlePage.pageNum-2:1}" end="${articlePage.pageNum+2>=articlePage.pages?articlePage.pages:articlePage.pageNum+2}" varStatus="index">
+					    	<!-- 当前页码的处理 -->
+					    	<c:if test="${articlePage.pageNum==index.index}">
+					    		<li class="page-item"><a class="page-link" href="javascript:void()"><font color="red"> ${index.index} </font></a>  </li>
+					  		</c:if>
+					  		
+					  		<!-- 非当前页码的处理 -->
+							<c:if test="${articlePage.pageNum!=index.index}">
+					    		<li class="page-item"><a class="page-link" onclick="gopage(${i.index})"> ${index.index}</a></li>
+					  		
+					    	</c:if>					  
+					    </c:forEach>
+		   	<%-- <c:forEach begin="1" end="${articlePage.pages}" varStatus="i">
 		   		<li class="page-item"><a class="page-link" href="#" onclick="gopage(${i.index})">${i.index}</a></li>
-		   	</c:forEach>
+		   	</c:forEach> --%>
 		    
 		   
 		   <li class="page-item">

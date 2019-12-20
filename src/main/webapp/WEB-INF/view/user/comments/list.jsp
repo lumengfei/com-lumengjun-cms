@@ -15,6 +15,6 @@
 <script type="text/javascript" src="/resource/js/jqueryvalidate/localization/messages_zh.js"></script>
 </head>
 <body>
-        aaaaaaaaaaaaaaaaaaaa
+       
 </body>
 </html>

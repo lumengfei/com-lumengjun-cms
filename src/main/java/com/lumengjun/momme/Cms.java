@@ -21,5 +21,7 @@ public class Cms {
 	public static final int NEEDNT_UPDATE = 5;
 
 	public static final int FAILED_UPDATE_DB = 3;
+
+	public static final int NOT_LOGIN = 0;
 	
 }

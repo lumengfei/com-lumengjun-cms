@@ -6,10 +6,17 @@ import java.util.List;
 
 
 
+
+
+
+
+
 import com.github.pagehelper.PageInfo;
 import com.lumengjun.entity.Article;
 import com.lumengjun.entity.Category;
 import com.lumengjun.entity.Channel;
+import com.lumengjun.entity.Comment;
+import com.lumengjun.entity.Slide;
 
 public interface ArticleService {
 
@@ -61,6 +68,34 @@ public interface ArticleService {
 	 * @return
 	 */
 	int updateArticle(Article article);
+
+	PageInfo<Article> getHot(int page);
+
+	List<Article> newList();
+
+	List<Slide> getSlides();
+
+	PageInfo<Comment> getComments(int id, int page);
+
+	/**
+	 * 
+	 * @param comment
+	 * @return
+	 */
+	int addComment(Comment comment);
+
+	Article getArticlepage(int id, int articleid);
+
+	/**
+	 * 
+	 * @param channelId
+	 * @param catId
+	 * @param page
+	 * @return
+	 */
+	PageInfo<Article> getArticles(int channelId, int catId, int page);
+
+	List<Category> getCategoriesByChannelId(int channelId);
 
 	
 

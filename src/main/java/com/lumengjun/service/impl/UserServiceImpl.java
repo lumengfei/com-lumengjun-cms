@@ -45,4 +45,11 @@ public class UserServiceImpl implements UserService {
 		return ma.setPassword(user);
 	}
 
+	@Override
+	public User getToUser(String name, String pwd) {
+		String pwwd = CmsUtils.encry(pwd, name);
+		
+		return ma.getToUser(name,pwwd);
+	}
+
 }

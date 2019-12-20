@@ -4,8 +4,9 @@ package com.lumengjun.controller;
 
 
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,9 +14,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 
+
+
 import com.github.pagehelper.PageInfo;
 import com.lumengjun.common.CmsMessage;
 import com.lumengjun.entity.Article;
+import com.lumengjun.entity.Link;
 import com.lumengjun.momme.Cms;
 import com.lumengjun.service.LockedService;
 
@@ -117,4 +121,14 @@ public class LockedController {
 		
 		return new CmsMessage(Cms.SUCCESS,"成功",null);
 	}
+	
+	
+	@RequestMapping("link")
+	public String link(@RequestParam(defaultValue="1")int page,HttpServletRequest request){
+		PageInfo<Link>  pageInfolink= lockedService.getLinkList(page); 
+		request.setAttribute("pageInfolink", pageInfolink);
+		return "/user/admin/link";
+		
+	}
+	
 }

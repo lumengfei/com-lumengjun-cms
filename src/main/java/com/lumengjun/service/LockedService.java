@@ -5,6 +5,7 @@ package com.lumengjun.service;
 
 import com.github.pagehelper.PageInfo;
 import com.lumengjun.entity.Article;
+import com.lumengjun.entity.Link;
 
 
 
@@ -17,5 +18,7 @@ public interface LockedService {
 	int setCheckStatus(Integer id, Integer status);
 
 	int setArticeHot(Integer id, Integer status);
+
+	PageInfo<Link> getLinkList(int page);
 
 }

@@ -5,59 +5,16 @@
 <!-- <div class="container-fluid"> -->
 	<table class="table">
 		<!-- articlePage -->
-	
-	  <thead>
-          <tr>
-            <th>id</th>
-            <th>标题</th>
-            <th>栏目</th>
-            <th>分类</th>
-            <th>作者</th>
-            <th>发布时间</th>
-            <th>状态</th>
-            <th>热门</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody>
-        	<c:forEach items="${articlePage.list}" var="article">
-        		<tr>
-        			<td>${article.id}</td>
-        			<td>${article.title}</td>
-        			<td>${article.channel.name}</td>
-        			<td>${article.category.name}</td>
-        			<td>${article.user.username}</td>
-        			<td><fmt:formatDate value="${article.created}" pattern="yyyy年MM月dd日"/></td>
-        			<td>
-        				<c:choose>
-        					<c:when test="${article.status==0}"> 待审核</c:when>
-        					<c:when test="${article.status==1}"> 审核通过</c:when>
-        					<c:when test="${article.status==2}"> 审核被拒</c:when>
-        					<c:otherwise>
-        						未知
-        					</c:otherwise>
-        				</c:choose>
-        			</td>
-        			<td>
-        				<c:choose>
-        					<c:when test="${article.hot==0}"> 非热门</c:when>
-        					<c:when test="${article.hot==1}"> 热门</c:when>
-        					<c:otherwise>
-        						未知
-        					</c:otherwise>
-        				</c:choose>
-        			</td>
-        			<td width="200px">
-        				<input type="button" value="删除"  class="btn btn-danger" onclick="del(${article.id})">
-        				<input type="button" value="审核"  class="btn btn-warning" onclick="check(${article.id})" >
-        			</td>
-        		</tr>
-        	</c:forEach>
-        </tbody>
+		<c:forEach items="${pageInfolink.list}" var="in" varStatus="count">
+		<c:if test="${count.count%4==1}"><tr></c:if>
+		<td><a href="${in.url}">${in.name}</a></td>
+		<c:if test="${count.count%4==0}"></tr></c:if>
+		
+		</c:forEach>	
       </table>
       
     
-      <nav aria-label="Page navigation example">
+      <%-- <nav aria-label="Page navigation example">
 		  <ul class="pagination justify-content-center">
 		    <li class="page-item">
 		      <a class="page-link" href="#"  onclick="gopage(1)">首页</a>
@@ -77,9 +34,9 @@
 					  		
 					    	</c:if>					  
 					    </c:forEach>
-		   	<%-- <c:forEach begin="1" end="${articlePage.pages}" varStatus="i">
+		   	<c:forEach begin="1" end="${articlePage.pages}" varStatus="i">
 		   		<li class="page-item"><a class="page-link" href="#" onclick="gopage(${i.index})">${i.index}</a></li>
-		   	</c:forEach> --%>
+		   	</c:forEach>
 		    
 		   
 		   <li class="page-item">
@@ -226,11 +183,11 @@
 		//refreshPage();
 	
 	 //}) 
-	
+	 --%>
   
   
 	
-</script>
+<!-- </script> -->
 
     
     

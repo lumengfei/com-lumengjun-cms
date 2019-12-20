@@ -1,6 +1,7 @@
 package com.lumengjun.controller;
 
 import java.io.File;
+
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,6 +15,9 @@ import java.util.Random;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
+
+
+
 
 
 
@@ -73,6 +77,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 
+
+
+
+
+
 import com.github.pagehelper.PageInfo;
 import com.lumengjun.cms.utils.FileUtils;
 import com.lumengjun.cms.utils.HtmlUtils;
@@ -82,6 +91,7 @@ import com.lumengjun.common.FileResult;
 import com.lumengjun.entity.Article;
 import com.lumengjun.entity.Category;
 import com.lumengjun.entity.Channel;
+import com.lumengjun.entity.Comment;
 import com.lumengjun.entity.User;
 import com.lumengjun.momme.Cms;
 import com.lumengjun.service.ArticleService;
@@ -104,6 +114,91 @@ public class ArticleController {
 	
 	@Autowired
 	ArticleService articleService;
+	
+	/**
+	 * 
+	 * @param request
+	 * @param id
+	 * @param page
+	 * @return
+	 */
+	@RequestMapping("comments")
+	public String comments(HttpServletRequest request,int id,int page) {
+		PageInfo<Comment> commentPage =  articleService.getComments(id,page);
+		request.setAttribute("commentPage", commentPage);
+		return "comments";
+	}
+	
+	/**
+	 * pagearticle
+	 */
+	@RequestMapping("pagearticle")
+	@ResponseBody
+	public CmsMessage pagearticle(HttpServletRequest request,int id,int articleid){
+		//System.out.println(id+"++++++++++++"+articleid);
+		
+		Article article =articleService.getArticlepage(id,articleid);
+		if(article==null){
+			if (id>articleid) {
+				//System.out.println(1);
+				return new CmsMessage(CmsError.NOT_EXIST, "已经是最后一篇了", "");
+			}else{
+				//System.out.println(2);
+				return new CmsMessage(CmsError.NOT_EXIST, "已经是第一篇了", "");
+			}
+		}
+		//System.out.println(3);
+		/*if(article.getId())*/
+		CmsMessage cmsMessage = new CmsMessage(CmsError.SUCCESS, "", article.getId());
+		return cmsMessage;
+		
+	}
+	
+	
+	/**
+	 * 
+	 * @param request
+	 * @param articleId
+	 * @param content
+	 * @return
+	 */
+	@RequestMapping("postcomment")
+	@ResponseBody
+	public CmsMessage postcomment(HttpServletRequest request,int articleId,String content) {
+		System.out.println(content);
+		User loginUser  = (User)request.getSession().getAttribute(Cms.USER);
+		
+		if(loginUser==null) {
+			return new CmsMessage(Cms.NOT_LOGIN, "您尚未登录！", null);
+		}
+		
+		Comment comment = new Comment();
+		comment.setUserId(loginUser.getId());
+		comment.setContent(content);
+		comment.setArticleId(articleId);
+		int result = articleService.addComment(comment);
+		if(result > 0)
+			return new CmsMessage(Cms.SUCCESS, "成功", null);
+		
+		return new CmsMessage(Cms.FAILED_UPDATE_DB, "异常原因失败，请与管理员联系", null);
+		
+	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping("detail")
+	public String detail(HttpServletRequest request,int id){
+		Article article = articleService.getArticleId(id);
+		System.out.println(article);
+		request.setAttribute("article", article);
+		
+		return "detail";
+		
+	}
 	
 	/**
 	 * 
@@ -147,12 +242,14 @@ public class ArticleController {
 	 * 
 	 * @return
 	 */
-	@RequestMapping("/comments")
+	@RequestMapping("/comment")
 	public String comments() {
 		
 		
 		return "/user/comments/list";
 	}
+	
+	
 	
 	/**
 	 * 个人设置
