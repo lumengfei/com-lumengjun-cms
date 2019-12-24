@@ -71,4 +71,22 @@
 		  </if>   
 		  ORDER BY id DESC 
     </select>
+    
+    <resultMap type="com.lumengjun.entity.Complain" id="ggComplain">
+    <id column="id" property="id"/>
+    <result property="articleId" column="article_id"/>
+    <result property="userId" column="user_id"/>
+    <result property="compainType" column="compain_type"/>
+    <result property="compainOption" column="compain_option"/>
+    <result property="srcUrl" column="src_url"/>
+    <association property="user" column="user_id" javaType="com.lumengjun.entity.User"  
+		   select="findUserById"/>
+    </resultMap>
+    <select id="getComplainId" resultMap="ggComplain">
+    SELECT * FROM cms_complain WHERE id=${value}
+    </select>
+    
+    <select id="getComplain" resultMap="ggComplain">
+    	SELECT * FROM cms_complain
+    </select>
   </mapper>

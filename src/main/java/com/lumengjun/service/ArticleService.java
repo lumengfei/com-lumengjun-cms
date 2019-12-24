@@ -11,11 +11,15 @@ import java.util.List;
 
 
 
+
+import javax.validation.Valid;
+
 import com.github.pagehelper.PageInfo;
 import com.lumengjun.entity.Article;
 import com.lumengjun.entity.Category;
 import com.lumengjun.entity.Channel;
 import com.lumengjun.entity.Comment;
+import com.lumengjun.entity.Complain;
 import com.lumengjun.entity.Slide;
 
 public interface ArticleService {
@@ -96,6 +100,14 @@ public interface ArticleService {
 	PageInfo<Article> getArticles(int channelId, int catId, int page);
 
 	List<Category> getCategoriesByChannelId(int channelId);
+
+	void addComplian(@Valid Complain complain);
+
+	PageInfo<Complain> getPageInfoComplain(int page);
+
+	
+
+	Complain getComplainId(int id);
 
 	
 

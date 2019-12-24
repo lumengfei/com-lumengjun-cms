@@ -6,8 +6,8 @@
 	<div class="row" style="margin-top:50px">
 		${comment.content}
 		<br>
-		${comment.userName}
-		<c:if test="${comment.userName==null}">游客</c:if>
+		${user.nickname==''?user.username:user.nickname}
+		<%-- <c:if test="${comment.userName==null}">游客</c:if> --%>
 		 发表于 <fmt:formatDate value="${comment.created}" pattern="yyyy-MM-dd" />
 		</div> 
 	</c:forEach>  

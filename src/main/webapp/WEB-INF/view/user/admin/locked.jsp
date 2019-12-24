@@ -94,7 +94,7 @@
 			<!-- 左侧的菜单 -->
 			<ul class="nav flex-column mymenuselected">
 				<li class="nav-item ">
-				    <a  class="nav-link active" href="#" onclick="showWork($(this),'/locked/article?status=0&page=1')" >文章管理</a>
+				    <a  class="nav-link active" href="#" onclick="showWork($(this),'/locked/article?status=-1&page=1')" >文章管理</a>
 				  </li>
 				  <li class="nav-item">
 				    <a class="nav-link" href="#" onclick="showWork($(this),'/locked/comment')" >评论管理</a>
@@ -104,6 +104,9 @@
 				  </li>
 				  <li class="nav-item">
 				    <a class="nav-link" href="#" onclick="showWork($(this),'/locked/user')" >用户管理管理</a>
+				  </li>
+				  <li class="nav-item">
+				    <a class="nav-link" href="#" onclick="showWork($(this),'/article/tocomplain')" >举报管理</a>
 				  </li>
 			</ul>
 		</div>

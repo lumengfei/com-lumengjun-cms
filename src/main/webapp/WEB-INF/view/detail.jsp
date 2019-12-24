@@ -41,6 +41,9 @@
 					    <li class="page-item">
 					    	<input type="button" class="btn btn-primary" onclick="pagearticle(${article.id+1},${article.id})" value="下一篇">
 					    </li>
+					    <li class="page-item">
+					    	<input type="button" class="btn btn-primary" style="color:red;" onclick="ssss(${article.id})" value="举报">
+					    </li>
 					  </ul>
 					</nav>
 		</div>
@@ -57,6 +60,11 @@
 		</div>
 		</div>
 	<script type="text/javascript">
+	function ssss(id){
+		
+		 location="/article/complain?articleId="+id;
+		
+	}
 	
 		function pagearticle(id,articleid){
 			//alert(id)
@@ -102,6 +110,55 @@
 				"json") 
 		}
 	</script>
+	
+	
+<%-- <div class="modal fade"   id="articleContent" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document" ><!-- style="margin-left:100px;" -->
+    <div class="modal-content" style="width:300px;" >
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">投诉</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body ">
+         	<div class="col-sm-9 col-md-9">					
+			<div class="form-group">
+		   <label >文章标题</label><br> ${article.title}<input type="hidden" name="articleId" value="${article.id}">
+		  	</div>										
+				<div class="form-group">
+		   <label >投诉类型</label>
+		    <select name="complainType" >
+		    	<option value="0">请选择</option>
+		    	<option value="1">政治敏感</option>
+		    	<option value="2">反社会</option>
+		    	<option value="3">涉毒</option>
+		    	<option value="4">涉黄 </option>
+		    </select>
+		     
+		 </div>
+		 <div class="form-group">
+		   <label >投诉类型</label><br>
+		   		<input type="checkbox" name="compainOption" value="1"> 标题夸张<br>
+		   		 <input type="checkbox" name="compainOption" value="2">与事实不符 <br>
+		   		 <input type="checkbox" name="compainOption" value="3"> 疑似抄袭<br>
+		 	 
+		  </div>		
+		  <div class="form-group">
+		   <label >内容</label>
+		   	<textarea name="content" cols="30" rows="3"></textarea>
+		   	 
+		  </div>
+		  			
+			</div>		
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" onclick="sss()">提交</button>
+      </div>
+    </div>
+  </div>
+</div> --%>
 
 </body>
 </html>

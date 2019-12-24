@@ -19,9 +19,15 @@
 		
 	<select id="getArticle" resultMap="articleMapper">
 		SELECT id,title,channel_id,category_id,user_id,content,picture, created,status,hot
-		  FROM cms_article where   deleted=#{value} and status=0
+		  FROM cms_article where   deleted=0 and status=#{value}
 		  ORDER BY id DESC  
 	</select>
+	<select id="getArticleqc" resultMap="articleMapper">
+	SELECT id,title,channel_id,category_id,user_id,content,picture, created,status,hot
+		  FROM cms_article where   deleted=0
+		  ORDER BY id DESC
+	</select>
+	
 	
 	<!-- 获取频道 -->
 	<select id="findChannel" resultType="channel">

@@ -2,6 +2,8 @@ package com.lumengjun.service.impl;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +15,7 @@ import com.lumengjun.entity.Article;
 import com.lumengjun.entity.Category;
 import com.lumengjun.entity.Channel;
 import com.lumengjun.entity.Comment;
+import com.lumengjun.entity.Complain;
 import com.lumengjun.entity.Slide;
 import com.lumengjun.momme.Cms;
 import com.lumengjun.service.ArticleService;
@@ -144,6 +147,36 @@ public class ArticleServiceImpl implements ArticleService {
 	public List<Category> getCategoriesByChannelId(int channelId) {
 		
 		return ma.getCategoriesByChannelId(channelId);
+	}
+
+
+	@Override
+	public void addComplian(@Valid Complain complain) {
+		
+		// TODO Auto-generated method stub
+		
+				//添加投诉到数据库
+				int result = ma.addCoplain(complain);
+				// 增加投诉的数量
+				if(result>0)
+					ma.increaseComplainCnt(complain.getArticleId());
+				
+				
+	}
+
+
+	@Override
+	public PageInfo<Complain> getPageInfoComplain(int page) {
+		PageHelper.startPage(page, Cms.PAGE_KEY);
+		
+		return new PageInfo<Complain>(ma.getComplain());
+	}
+
+
+	@Override
+	public Complain getComplainId(int id) {
+		// TODO Auto-generated method stub
+		return ma.getComplainId(id);
 	}
 
 }

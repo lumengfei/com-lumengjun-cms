@@ -33,6 +33,19 @@
 	</properties>
 	<dependencies>
 	
+	<!-- 整合jwt -->
+		<dependency>
+    <groupId>com.auth0</groupId>
+    <artifactId>java-jwt</artifactId>
+    <version>2.2.0</version>
+</dependency>
+	
+	<dependency>
+    <groupId>com.alibaba</groupId>
+    <artifactId>fastjson</artifactId>
+    <version>1.2.47</version>
+	</dependency>
+	
 		<!-- 引入工具类 -->
 		<dependency>
 			<groupId>com.lumengjun.cms</groupId>

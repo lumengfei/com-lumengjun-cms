@@ -1,7 +1,6 @@
 package com.lumengjun.controller;
 
 import java.io.File;
-
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -48,10 +47,15 @@ import javax.servlet.http.HttpServletRequest;
 
 
 
+
+
+import javax.validation.Valid;
+
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.ibatis.annotations.Param;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +63,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -82,9 +88,17 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 
+
+
+
+
+
+
+
 import com.github.pagehelper.PageInfo;
 import com.lumengjun.cms.utils.FileUtils;
 import com.lumengjun.cms.utils.HtmlUtils;
+import com.lumengjun.cms.utils.StringUtils;
 import com.lumengjun.common.CmsError;
 import com.lumengjun.common.CmsMessage;
 import com.lumengjun.common.FileResult;
@@ -92,6 +106,7 @@ import com.lumengjun.entity.Article;
 import com.lumengjun.entity.Category;
 import com.lumengjun.entity.Channel;
 import com.lumengjun.entity.Comment;
+import com.lumengjun.entity.Complain;
 import com.lumengjun.entity.User;
 import com.lumengjun.momme.Cms;
 import com.lumengjun.service.ArticleService;
@@ -152,6 +167,84 @@ public class ArticleController {
 		CmsMessage cmsMessage = new CmsMessage(CmsError.SUCCESS, "", article.getId());
 		return cmsMessage;
 		
+	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @param articleId
+	 * @return
+	 */
+	@RequestMapping(value="tocomplain",method=RequestMethod.GET)
+	public String tocomplain(@RequestParam(defaultValue="1")int page,HttpServletRequest request){
+		PageInfo<Complain> pageinfocomplain=articleService.getPageInfoComplain(page);
+		request.getSession().setAttribute("pageinfocomplain", pageinfocomplain);
+		return "/user/admin/complain";
+	}
+	
+	
+	
+	@RequestMapping(value="complain",method=RequestMethod.GET)
+	public String complain(HttpServletRequest request,int articleId){
+		Article article= articleService.getArticleId(articleId);
+		request.setAttribute("article", article);
+		request.setAttribute("complain", new Complain());
+		return "/article/complain";
+	}
+	
+	@RequestMapping("getComplain")
+	@ResponseBody
+	public CmsMessage getComplain(int id){
+		Complain com = articleService.getComplainId(id);
+		System.out.println(com);
+		if(com==null){
+			return new CmsMessage(Cms.NEEDNT_UPDATE, "信息错误", null);
+		}
+		System.out.println(1);
+		return new CmsMessage(Cms.SUCCESS, "", com);
+		
+	}
+	
+	/**
+	 * 接受投诉页面提交的数据
+	 * @param request
+	 * @param articleId
+	 * @return
+	 * @throws IOException 
+	 * @throws IllegalStateException 
+	 */
+	@RequestMapping(value="complain",method=RequestMethod.POST)
+	public String complain(HttpServletRequest request,
+			@ModelAttribute("complain") @Valid Complain complain,
+			MultipartFile file,
+			BindingResult result) throws IllegalStateException, IOException {
+		System.out.println(1);
+		if(!StringUtils.isHttpUrl(complain.getSrcUrl())) {
+			result.rejectValue("srcUrl", "", "不是合法的url地址");
+		}
+		System.out.println(2);
+		if(result.hasErrors()) {
+			Article article= articleService.getArticleId(complain.getId());
+			request.setAttribute("article", article);
+			return "article/complain";
+		}
+		System.out.println(3);
+		User loginUser  =  (User)request.getSession().getAttribute(Cms.USER);
+		System.out.println(4);
+		String picUrl = this.processFile(file);
+		complain.setPicture(picUrl);
+		
+		System.out.println(5);
+		//加上投诉人
+		if(loginUser!=null)
+			complain.setUserId(loginUser.getId());
+		else
+			complain.setUserId(0);
+		System.out.println(6);
+		articleService.addComplian(complain);
+		System.out.println(7);
+		return "redirect:/article/detail?id="+complain.getArticleId();
+				
 	}
 	
 	

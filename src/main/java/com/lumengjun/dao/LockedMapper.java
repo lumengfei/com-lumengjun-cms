@@ -24,4 +24,6 @@ public interface LockedMapper {
 	@Select("SELECT * FROM cms_link")
 	List<Link> getLinkList();
 
+	List<Article> getArticleqc();
+
 }

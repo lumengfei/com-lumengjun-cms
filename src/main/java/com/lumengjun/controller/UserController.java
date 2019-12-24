@@ -2,9 +2,13 @@ package com.lumengjun.controller;
 
 
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+
+
 
 
 
@@ -30,6 +34,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+
 
 
 
@@ -143,7 +149,9 @@ public class UserController {
 	public String login(@Valid @ModelAttribute("user") User user,
 			BindingResult result,
 			Model m,
-			HttpSession session){
+			HttpSession session,
+			HttpServletResponse response){
+		String pwd = user.getPassword();
 		if(result.hasErrors()){
 			m.addAttribute("user", user);
 			return "/user/login";
@@ -153,6 +161,15 @@ public class UserController {
 			result.rejectValue("id", "", "登录失败，用户名或密码错误");
 			return "/user/login";
 		}
+		//保存用户的用户名和密码
+		Cookie cookieUserName = new Cookie("username", user.getUsername());
+		cookieUserName.setPath("/");
+		cookieUserName.setMaxAge(10*24*3600);// 10天
+		response.addCookie(cookieUserName);
+		Cookie cookieUserPwd = new Cookie("userpwd", pwd);
+		cookieUserPwd.setPath("/");
+		cookieUserPwd.setMaxAge(10*24*3600);// 10天
+		response.addCookie(cookieUserPwd);
 		session.setAttribute(Cms.USER, u);
 		if(u.getLocked()==0)
 		return "redirect:/user/home";
@@ -190,8 +207,16 @@ public class UserController {
 	 * exit
 	 */
 	@RequestMapping("/exit")
-	public String exit(HttpSession session){
+	public String exit(HttpSession session,HttpServletResponse response){
 		session.removeAttribute(Cms.USER);
+		Cookie cookieUserName = new Cookie("username", "");
+		cookieUserName.setPath("/");
+		cookieUserName.setMaxAge(0);// 立即过期
+		response.addCookie(cookieUserName);
+		Cookie cookieUserPwd = new Cookie("userpwd", "");
+		cookieUserPwd.setPath("/");
+		cookieUserPwd.setMaxAge(0);// 立即过期
+		response.addCookie(cookieUserPwd);
 		return "redirect:/user/login";
 	}
 	/**
@@ -199,12 +224,21 @@ public class UserController {
 	 */
 	@RequestMapping("/tologin")
 	@ResponseBody
-	public CmsMessage tologin(String name,String pwd,HttpServletRequest request){
+	public CmsMessage tologin(String name,String pwd,HttpServletRequest request,HttpServletResponse response){
 		User user = ser.getToUser(name,pwd);
 		if(user==null){
 			return  new CmsMessage(Cms.NOT_EXIST, "用户名或密码错误", "");
 		}
 		request.getSession().setAttribute(Cms.USER, user);
+			//保存用户的用户名和密码
+				Cookie cookieUserName = new Cookie("username", user.getUsername());
+				cookieUserName.setPath("/");
+				cookieUserName.setMaxAge(10*24*3600);// 10天
+				response.addCookie(cookieUserName);
+				Cookie cookieUserPwd = new Cookie("userpwd", pwd);
+				cookieUserPwd.setPath("/");
+				cookieUserPwd.setMaxAge(10*24*3600);// 10天
+				response.addCookie(cookieUserPwd);
 		 return  new CmsMessage(Cms.SUCCESS, "", "登录成功");
 	}
 }

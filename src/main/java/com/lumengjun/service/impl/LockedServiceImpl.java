@@ -24,7 +24,12 @@ public class LockedServiceImpl implements LockedService {
 	@Override
 	public PageInfo<Article> getArticle(Integer status, Integer page) {
 		PageHelper.startPage(page, Cms.PAGE_KEY);
-		List<Article> list = lockedMapper.getArticle(status);
+		List<Article> list=null;
+		if(status==-1){
+		 list = lockedMapper.getArticleqc();
+		}else{
+		list = lockedMapper.getArticle(status);
+		}
 		PageInfo<Article> pageInfo = new PageInfo<Article>(list);
 		return pageInfo;
 	}
@@ -54,6 +59,8 @@ public class LockedServiceImpl implements LockedService {
 		
 		return new PageInfo<Link>(list);
 	}
+
+	
 	
 	
 	

@@ -2,6 +2,8 @@ package com.lumengjun.dao;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.ResultType;
@@ -12,6 +14,7 @@ import com.lumengjun.entity.Article;
 import com.lumengjun.entity.Category;
 import com.lumengjun.entity.Channel;
 import com.lumengjun.entity.Comment;
+import com.lumengjun.entity.Complain;
 import com.lumengjun.entity.Slide;
 
 public interface ArticleMapper {
@@ -125,6 +128,26 @@ public interface ArticleMapper {
 	
 	@Update("UPDATE cms_article SET commentCnt=commentCnt+1 WHERE id=#{value}")
 	void updateCommentCnt(int articleId);
+
+	
+	@Insert("INSERT INTO cms_complain(article_id,user_id,complain_type,"
+			+ "compain_option,src_url,picture,content,email,mobile,created)"
+			+ "   VALUES(#{articleId},#{userId},"
+			+ "#{complainType},#{compainOption},#{srcUrl},#{picture},#{content},#{email},#{mobile},now())")
+	int addCoplain(@Valid Complain complain);
+
+	/**
+	 * 
+	 * @param articleId
+	 */
+	@Update("UPDATE cms_article SET complainCnt=complainCnt+1,status=if(complainCnt>10,2,status)  "
+			+ " WHERE id=#{value}")
+	void increaseComplainCnt(Integer articleId);
+
+	
+	List<Complain> getComplain();
+
+	Complain getComplainId(int id);
 
 	
 

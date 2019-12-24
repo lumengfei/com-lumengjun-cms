@@ -6,7 +6,34 @@
 	<table class="table">
 		<!-- articlePage -->
 	
+	<script type="text/javascript">
+		function tostatus(){
+			if($("#status").val()==-1){
+			$("#workcontent").load("/locked/article?status=-1");
+			}else{
+				$("#workcontent").load("/locked/article?status="+$("#status").val());
+			}
+		}
+	</script>
+	
 	  <thead>
+	  		<tr>
+	  			<td colspan="100">
+	  			<select onchange="tostatus()" id="status">
+	  				<option 
+	  				<c:if test="${status==-1}">selected</c:if>
+	  				 value="-1">全部</option>
+	  				<option 
+	  				<c:if test="${status==0}">selected</c:if> value="0">未审核</option>
+	  				<option
+	  					<c:if test="${status==1}">selected</c:if>
+	  				 value="1">审核通过</option>
+	  				<option
+	  					<c:if test="${status==2}">selected</c:if>
+	  				 value="2">审核拒绝</option>
+	  			</select>
+	  			</td>
+	  		</tr>
           <tr>
             <th>id</th>
             <th>标题</th>
@@ -221,11 +248,12 @@
 		$("#workcontent").load("/locked/article?page=" + '${articlePage.pageNum}' + "&status="+'${status}');
 	}
 	
-	
-	 //$('#articleContent').on('hidden.bs.model', function (e) {
-		//refreshPage();
-	
-	 //}) 
+/* 
+		$('#articleContent').on('hidden.bs.model', function (e) {
+			refreshPage();
+		 })  */
+
+ 
 	
   
   
