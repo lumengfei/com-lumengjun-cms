@@ -173,7 +173,7 @@
 		<!-- 右侧 -->
 		<div class="col-md-4">
 				
-				<div class="card">
+				 <div class="card">
 					  <div class="card-header">
 					    最新文章
 					  </div>

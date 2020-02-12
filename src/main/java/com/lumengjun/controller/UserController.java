@@ -23,6 +23,7 @@ import javax.validation.Valid;
 
 
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,7 +34,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 
 
 
@@ -125,16 +128,21 @@ public class UserController {
 		return u==null;
 	}
 	
+	
+	
 	/**
 	 * 
 	 * @param m
 	 * @return
 	 */
 	@RequestMapping(value="/login",method=RequestMethod.GET)
-	public String login(Model m){
+	public String login(Model m,HttpServletResponse response,HttpServletRequest request){
+		
 		m.addAttribute("user", new User());
 		return "/user/login";
 	}
+	
+	
 	
 	
 	/**
@@ -150,7 +158,8 @@ public class UserController {
 			BindingResult result,
 			Model m,
 			HttpSession session,
-			HttpServletResponse response){
+			HttpServletResponse response,
+			@RequestParam(defaultValue="0")int ck){
 		String pwd = user.getPassword();
 		if(result.hasErrors()){
 			m.addAttribute("user", user);
@@ -161,6 +170,7 @@ public class UserController {
 			result.rejectValue("id", "", "登录失败，用户名或密码错误");
 			return "/user/login";
 		}
+		if(ck==2){
 		//保存用户的用户名和密码
 		Cookie cookieUserName = new Cookie("username", user.getUsername());
 		cookieUserName.setPath("/");
@@ -170,6 +180,9 @@ public class UserController {
 		cookieUserPwd.setPath("/");
 		cookieUserPwd.setMaxAge(10*24*3600);// 10天
 		response.addCookie(cookieUserPwd);
+		}
+		
+		
 		session.setAttribute(Cms.USER, u);
 		if(u.getLocked()==0)
 		return "redirect:/user/home";

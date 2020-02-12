@@ -29,6 +29,15 @@
 	<context:property-placeholder
 		location="classpath:db.properties" />
 	
+	<!--加载es配置文件  -->
+	<import resource="classpath:es.xml"/>
+	<!-- 加载Redis文件 -->
+	<import resource="classpath:redis.xml"/>
+	
+	<!-- 生产者 -->
+	<import resource="classpath:producer.xml"/> 
+	<!-- 消费者 -->
+	<import resource="classpath:consumer.xml"/>
 
 	<!-- 3.使用druid数据源 连接池 -->
 	<bean id="dataSource" 

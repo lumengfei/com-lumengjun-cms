@@ -150,5 +150,8 @@ public interface ArticleMapper {
 	Complain getComplainId(int id);
 
 	
+	List<Article> list_Article();
+
+	
 
 }

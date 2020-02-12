@@ -89,4 +89,9 @@
     <select id="getComplain" resultMap="ggComplain">
     	SELECT * FROM cms_complain
     </select>
+    
+    <select id="list_Article" resultMap="articleMapper">
+    SELECT * FROM cms_article WHERE status=1 AND  deleted=0
+    </select>
+    
   </mapper>

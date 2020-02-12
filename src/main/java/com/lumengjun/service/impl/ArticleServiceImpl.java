@@ -1,15 +1,20 @@
 package com.lumengjun.service.impl;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.validation.Valid;
 
+import org.elasticsearch.index.merge.OnGoingMerge;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.lumengjun.dao.ArticleMapper;
+import com.lumengjun.dao.ArticleRep;
 import com.lumengjun.dao.SlideMapper;
 import com.lumengjun.entity.Article;
 import com.lumengjun.entity.Category;
@@ -34,6 +39,30 @@ public class ArticleServiceImpl implements ArticleService {
 	SlideMapper slideMapper;
 	
 	
+	@Autowired
+	RedisTemplate redisTemplate;
+	
+	
+	@Autowired
+	ArticleRep articleRep;
+	
+	@Autowired
+	KafkaTemplate<String, Object> kafkaTemplate;
+	
+	
+	
+	public void add_Article(List<Article> articles){
+		articleRep.saveAll(articles);
+	}
+	
+	
+	public List<Article> list_Article(){
+		List<Article> articles = ma.list_Article();
+		
+		return articles;
+		
+	}
+	
 	@Override
 	public PageInfo<Article> listByUser(Integer id, int page) {
 		PageHelper.startPage(page, Cms.PAGE_KEY);
@@ -45,8 +74,11 @@ public class ArticleServiceImpl implements ArticleService {
 
 	@Override
 	public int deletearticle(Integer id) {
-		// TODO Auto-generated method stub
-		return ma.deletearticle(id);
+		int deletearticle = ma.deletearticle(id);
+		if(deletearticle>0){
+			kafkaTemplate.send("article", "del="+id);
+		}
+		return deletearticle;
 	}
 
 
@@ -80,23 +112,109 @@ public class ArticleServiceImpl implements ArticleService {
 
 	@Override
 	public int updateArticle(Article article) {
-		// TODO Auto-generated method stub
-		return ma.updateArticle(article);
+		int updateArticle = ma.updateArticle(article);
+		if(updateArticle>0){
+			kafkaTemplate.send("article", "del="+article.getId());
+		}
+		return updateArticle;
 	}
 
 
 	@Override
 	public PageInfo<Article> getHot(int page) {
-		PageHelper.startPage(page, Cms.PAGE_KEY);
-		List<Article> list = ma.getHot();
-		return new PageInfo<Article>(list);
+		//进行分页
+		//PageHelper.startPage(page, Cms.PAGE_KEY);
+		//从Redis中查找热门文章
+		List<Article> range = redisTemplate.opsForList().range(Cms.REMENG,0, -1);
+		//判断Redis中是否有热门文章
+		
+		if(range==null || range.size()==0){
+			//System.err.println("从MySQL中获取");
+			//没有热门文章从MySQL中查找热门文章
+			List<Article> list = ma.getHot();
+			//System.err.println(list.size());
+			//将从MySQL中查找的热门文章放到Redis中
+			redisTemplate.opsForList().leftPushAll(Cms.REMENG, list.toArray());
+			//设置Redis的过期时间
+			redisTemplate.expire(Cms.REMENG, 5, TimeUnit.MINUTES);
+			
+			List<Article> range1 = redisTemplate.opsForList().range(Cms.REMENG, (page-1)*Cms.PAGE_KEY, ((page-1)*Cms.PAGE_KEY)+Cms.PAGE_KEY-1);
+			//将热门文章返回
+			PageInfo<Article> pageInfo = new PageInfo<Article>(range1);
+			pageInfo.setPageNum(page);
+			pageInfo.setSize(Cms.PAGE_KEY);
+			int pages =0;
+			if(list.size()%Cms.PAGE_KEY==0){
+				pages =list.size()%Cms.PAGE_KEY;
+			}else{
+				pages =list.size()%Cms.PAGE_KEY+1;
+			}
+			pageInfo.setPages(pages);
+			pageInfo.setTotal(list.size());
+			if(page-1>0){
+				pageInfo.setPrePage(page-1);
+			}else{
+				pageInfo.setPrePage(0);
+			}
+			if(page+1<=pageInfo.getPages()){
+				pageInfo.setLastPage(page+1);
+			}else{
+				pageInfo.setLastPage(0);
+			}
+			pageInfo.setLastPage(page+1);
+			return pageInfo;
+		}
+		//System.err.println("从Redis中获取");
+		//有热门文章直接返回
+		List<Article> range1 = redisTemplate.opsForList().range(Cms.REMENG, (page-1)*Cms.PAGE_KEY, ((page-1)*Cms.PAGE_KEY)+Cms.PAGE_KEY-1);
+		//将热门文章返回
+		PageInfo<Article> pageInfo = new PageInfo<Article>(range1);
+		pageInfo.setPageNum(page);
+		pageInfo.setSize(Cms.PAGE_KEY);
+		int pages =0;
+		if(range.size()%Cms.PAGE_KEY==0){
+			pages =range.size()%Cms.PAGE_KEY;
+		}else{
+			pages =range.size()%Cms.PAGE_KEY+1;
+		}
+		pageInfo.setPages(pages);
+		pageInfo.setTotal(range.size());
+		if(page-1>0){
+			pageInfo.setPrePage(page-1);
+		}else{
+			pageInfo.setPrePage(0);
+		}
+		if(page+1<=pageInfo.getPages()){
+			pageInfo.setLastPage(page+1);
+		}else{
+			pageInfo.setLastPage(0);
+		}
+		pageInfo.setLastPage(page+1);
+		return pageInfo;
 	}
 
 
 	@Override
 	public List<Article> newList() {
-		// TODO Auto-generated method stub
-		return ma.newList(Cms.PAGE_KEY);
+		//判断Redis中是否有最新文章
+		List<Article> range = redisTemplate.opsForList().range(Cms.NEW_ARTICLE, 0, -1);
+		//System.err.println(range.size());
+		if(range==null || range.size()==0){
+		//没有从MySQL中查询
+			
+		List<Article> newList = ma.newList(Cms.PAGE_KEY);
+		System.err.println("走MySQL");
+		System.err.println(newList.size());
+		//存入Redis中
+		for (Article article : newList) {
+			redisTemplate.opsForList().leftPush(Cms.NEW_ARTICLE, article);
+		}
+		//设置过期时间
+		redisTemplate.expire(Cms.NEW_ARTICLE, 5, TimeUnit.MINUTES);
+		return newList;
+		}
+		//有直接返回
+		return range;
 	}
 
 

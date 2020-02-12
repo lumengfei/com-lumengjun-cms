@@ -23,5 +23,9 @@ public class Cms {
 	public static final int FAILED_UPDATE_DB = 3;
 
 	public static final int NOT_LOGIN = 0;
+
+	public static final String REMENG = "hot_article";
+
+	public static final String NEW_ARTICLE = "new_Article";
 	
 }

@@ -41,9 +41,9 @@
 					    <li class="page-item">
 					    	<input type="button" class="btn btn-primary" onclick="pagearticle(${article.id+1},${article.id})" value="下一篇">
 					    </li>
-					    <li class="page-item">
+					    <%-- <li class="page-item">
 					    	<input type="button" class="btn btn-primary" style="color:red;" onclick="ssss(${article.id})" value="举报">
-					    </li>
+					    </li> --%>
 					  </ul>
 					</nav>
 		</div>

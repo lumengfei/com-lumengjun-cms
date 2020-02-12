@@ -105,9 +105,9 @@
 				  <li class="nav-item">
 				    <a class="nav-link" href="#" onclick="showWork($(this),'/locked/user')" >用户管理管理</a>
 				  </li>
-				  <li class="nav-item">
+				  <!-- <li class="nav-item">
 				    <a class="nav-link" href="#" onclick="showWork($(this),'/article/tocomplain')" >举报管理</a>
-				  </li>
+				  </li> -->
 			</ul>
 		</div>
 

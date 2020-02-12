@@ -109,6 +109,10 @@ public interface ArticleService {
 
 	Complain getComplainId(int id);
 
+	List<Article> list_Article();
+
+	void add_Article(List<Article> list_Article);
+
 	
 
 }

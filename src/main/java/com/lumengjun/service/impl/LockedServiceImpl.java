@@ -2,13 +2,15 @@ package com.lumengjun.service.impl;
 
 import java.util.List;
 
-import net.sf.jsqlparser.expression.operators.relational.LikeExpression;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.lumengjun.dao.ArticleMapper;
+import com.lumengjun.dao.ArticleRep;
 import com.lumengjun.dao.LockedMapper;
 import com.lumengjun.entity.Article;
 import com.lumengjun.entity.Link;
@@ -21,6 +23,16 @@ public class LockedServiceImpl implements LockedService {
 	@Autowired
 	LockedMapper lockedMapper;
 
+	@Autowired
+	KafkaTemplate<String, Object> kafkaTemplate;
+	
+	@Autowired
+	ArticleMapper articleMapper;
+	
+	@Autowired
+	ArticleRep articleRep;
+	
+	
 	@Override
 	public PageInfo<Article> getArticle(Integer status, Integer page) {
 		PageHelper.startPage(page, Cms.PAGE_KEY);
@@ -43,7 +55,15 @@ public class LockedServiceImpl implements LockedService {
 	@Override
 	public int setCheckStatus(Integer id, Integer status) {
 		// TODO Auto-generated method stub
-		return lockedMapper.setCheckStatus(id,status);
+		int setCheckStatus = lockedMapper.setCheckStatus(id,status);
+		Article articleId2 = articleMapper.getArticleId(id);
+		articleRep.save(articleId2);
+		if(status==1&&setCheckStatus==1){
+		Article articleId = articleMapper.getArticleId(setCheckStatus);
+		String jsonString = JSON.toJSONString(articleId);
+		kafkaTemplate.send("article","add="+jsonString);
+		}
+		return setCheckStatus;
 	}
 
 	@Override

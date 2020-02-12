@@ -36,6 +36,9 @@
 							<form:password  path="password"/>					
 							<form:errors path="password"></form:errors>
 							<form:errors path="id"></form:errors>
+						</div>
+						<div class="form-group">							
+							<i class="fa fa-lock fa-lg"><input type="checkbox" name="ck" value="2">是否记住</i>							
 						</div>								
 						<div class="form-group">						
 								<input type="submit" class="btn btn-success pull-right" value="登录"/>		
