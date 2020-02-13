@@ -115,6 +115,7 @@ public class ArticleServiceImpl implements ArticleService {
 		int updateArticle = ma.updateArticle(article);
 		if(updateArticle>0){
 			kafkaTemplate.send("article", "del="+article.getId());
+			articleRep.deleteById(article.getId());
 		}
 		return updateArticle;
 	}
