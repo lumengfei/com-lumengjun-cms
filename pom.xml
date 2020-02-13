@@ -446,9 +446,27 @@
 			 <artifactId>maven-site-plugin</artifactId>
 			 <version>3.7.1</version>
 			</plugin>
+			
+			
+			
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat7-maven-plugin</artifactId>
+				<version>2.2</version>
+				
+				
+				<configuration>
+					<url>http://192.168.1.121:28082/manager/text</url>
+					<username>tomcat</username>
+					<password>tomcat</password>
+				</configuration>
+			</plugin>
+			
 
 		</plugins>
 	</build>
+	
+	
 	
 
 </project>
