@@ -11,6 +11,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.lumengjun.dao.ArticleMapper;
@@ -99,12 +100,14 @@ public class ArticleServiceImpl implements ArticleService {
 	@Override
 	public int add(Article article) {
 		
+		System.err.println(article.getTitle()+"已导入完毕");
 		return ma.add(article);
 	}
 
 
 	@Override
 	public Article getArticleId(Integer id) {
+		
 		
 		return ma.getArticleId(id);
 	}
@@ -296,6 +299,28 @@ public class ArticleServiceImpl implements ArticleService {
 	public Complain getComplainId(int id) {
 		// TODO Auto-generated method stub
 		return ma.getComplainId(id);
+	}
+
+
+	@Override
+	public List<Article> getArticle() {
+		// TODO Auto-generated method stub
+		return ma.getArticleList();
+	}
+
+
+	@Override
+	public void updatehits(Integer id) {
+		int hist= ma.gethits(id);
+		ma.updatehits(id,(hist+1));
+		
+	}
+
+
+	@Override
+	public List<Article> getHotart() {
+		
+		return ma.getHotart();
 	}
 
 }

@@ -12,6 +12,7 @@ import java.util.List;
 
 
 
+
 import javax.validation.Valid;
 
 import com.github.pagehelper.PageInfo;
@@ -112,6 +113,12 @@ public interface ArticleService {
 	List<Article> list_Article();
 
 	void add_Article(List<Article> list_Article);
+
+	List<Article> getArticle();
+
+	void updatehits(Integer parseObject);
+
+	List<Article> getHotart();
 
 	
 

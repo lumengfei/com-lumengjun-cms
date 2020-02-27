@@ -70,6 +70,9 @@
 						  <a class="nav-link menu" href="/channel?channelId=${channel.id}"> ${channel.name} </a>
 						</li>
 					</c:forEach>
+					<li  class="nav-item ">
+						  <a class="nav-link menu" href="/hotarticle"> 热门文章 </a>
+					</li>
 				</ul>
 			</div>
 		</div>
@@ -88,7 +91,7 @@
 					  <div class="carousel-inner">
 					    <c:forEach items="${slides}" var="slide" varStatus="index">
 					    <div class="carousel-item ${index.index==0?'active':''}">
-					      <img src="/pic/${slide.picture}" class="d-block w-100" alt="${slide.title}">
+					      <img src="/pic/${slide.picture}" class="d-block w-100" width="500px" height="500px" alt="${slide.title}">
 					      <div class="carousel-caption d-none d-md-block">
 					        <h5>${slide.title} </h5>
 					        <p>${slide.title}</p>

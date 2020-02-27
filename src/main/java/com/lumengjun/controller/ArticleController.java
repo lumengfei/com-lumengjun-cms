@@ -12,6 +12,9 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+
+import javafx.scene.shape.Path;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -55,12 +58,15 @@ import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.ibatis.annotations.Param;
 import org.apache.log4j.Logger;
+import org.jboss.netty.handler.ipfilter.IpSubnet;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpRequest;
+import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -105,6 +111,36 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import com.alibaba.fastjson.JSON;
+import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.lumengjun.cms.utils.FileUtils;
 import com.lumengjun.cms.utils.HtmlUtils;
@@ -117,9 +153,11 @@ import com.lumengjun.entity.Category;
 import com.lumengjun.entity.Channel;
 import com.lumengjun.entity.Comment;
 import com.lumengjun.entity.Complain;
+import com.lumengjun.entity.ShouCang;
 import com.lumengjun.entity.User;
 import com.lumengjun.momme.Cms;
 import com.lumengjun.service.ArticleService;
+import com.lumengjun.service.ShouCangService;
 
 
 /*
@@ -140,6 +178,109 @@ public class ArticleController {
 	
 	@Autowired
 	ArticleService articleService;
+	
+	@Autowired
+	KafkaTemplate<String, String> kafkaTemplate;
+	
+	@Autowired
+	ElasticsearchTemplate elasticsearchTemplate;
+
+	
+	@Autowired
+	RedisTemplate<String, Article> redisTemplate;
+	
+	
+	@Autowired
+	RedisTemplate<String, ShouCang> redisShouCang;
+	@Autowired
+	ThreadPoolTaskExecutor executor;
+	
+	@Autowired
+	ShouCangService shouCangService;
+	
+	static StringBuffer hit= new StringBuffer();
+	
+	@RequestMapping("addshoucang")
+	public String addshoucang(){
+		
+		return "/user/articles/addshoucang";
+	}
+	
+	
+	/**
+	 * 
+	 * @param cang
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping("addsc")
+	@ResponseBody
+	public Boolean addsc(ShouCang cang,HttpServletRequest request){
+		System.out.println("到此一游");
+		//获取user
+		User attribute = (User) request.getSession().getAttribute(Cms.USER);
+		//将user  id  放入ShouCang对象中
+		cang.setUser_id(attribute.getId());
+		System.out.println(cang);
+		//添加收藏夹
+		int i = shouCangService.addShouCang(cang);
+		if(i>0){
+			return true;
+		}
+		return false;
+		
+	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @param page
+	 * @param pagesize
+	 * @return
+	 */
+	@RequestMapping("/shoucangjia")
+	public String shoucangjia(HttpServletRequest request,@RequestParam(defaultValue="1")int page,@RequestParam(defaultValue="3")int pagesize){
+		//获取user
+		User attribute = (User) request.getSession().getAttribute(Cms.USER);
+		//传入当前页，每页条数
+		PageHelper.startPage(page, pagesize);
+		//获取收藏夹数据
+		List<ShouCang> findShouCang = shouCangService.findShouCang(attribute.getId());
+		//放到pageinfo里
+		PageInfo<ShouCang> pageindo =new PageInfo<ShouCang>(findShouCang);
+		request.setAttribute("pageInfo", pageindo);
+		return "/user/articles/shoucangjia";
+	}
+	
+	//
+	/**
+	 * 
+	 * @param request
+	 * @param id	
+	 * @param userid
+	 * @return
+	 */
+	@RequestMapping("delshoucangjia")
+	@ResponseBody
+	public Boolean delshoucangjia(HttpServletRequest request,int id,int userid){
+		//获取user
+		User attribute = (User) request.getSession().getAttribute(Cms.USER);
+		//判断是否是登录用户的收藏夹
+		if(attribute.getId()!=userid){
+			return false;
+		}
+		//删除收藏夹
+		int i =shouCangService.delShouCangById(id);
+		if(i>0){
+			return true;
+		}
+		return false;
+		
+	}
+	
+	
+	
+	
 	
 	/**
 	 * 
@@ -296,10 +437,51 @@ public class ArticleController {
 	 */
 	@RequestMapping("detail")
 	public String detail(HttpServletRequest request,int id){
-		Article article = articleService.getArticleId(id);
-		System.out.println(article);
-		request.setAttribute("article", article);
 		
+		//获取用户ip
+		String remoteAddr = request.getRemoteAddr();
+		
+		//使用String线程池节省空间
+		StringBuilder string =new StringBuilder("Hits_"+id+"_"+remoteAddr);
+		
+		
+		//从Redis中取出文章
+		Article article2 = redisTemplate.opsForValue().get(string.toString());
+		
+		//判断是否有文章
+		if(article2==null){
+			executor.createThread(new Runnable() {
+				
+				@Override
+				public void run() {
+					//使用kafka异步修改点击数
+					String jsonString = JSON.toJSONString(id);
+					kafkaTemplate.send("lumengjun", "dianji", jsonString);
+					
+					//没有文章添加文章
+					//从Mysql中查出文章
+					System.err.println("从MySQL中获取文章");
+					Article article = articleService.getArticleId(id);
+					request.setAttribute("article", article);
+					//放入Redis中
+					redisTemplate.opsForValue().set(string.toString(), article);
+					//设置过期时间
+					redisTemplate.expire(string.toString(),5 , TimeUnit.MINUTES);
+				}
+			}).start();
+			/*Article article = redisTemplate.opsForValue().get(string.toString());
+			request.setAttribute("article", article);*/
+			
+		}else if(article2!=null){
+			System.err.println("从Redis中获取文章");
+			request.setAttribute("article", article2);
+		}
+		try {
+			Thread.sleep(1*1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return "detail";
 		
 	}

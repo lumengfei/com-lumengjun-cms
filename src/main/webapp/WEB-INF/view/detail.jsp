@@ -25,7 +25,8 @@
 			作者：${article.user.username} &nbsp;&nbsp;&nbsp;
 			栏目：${article.channel.name}  &nbsp;&nbsp;&nbsp;
 			分类：${article.category.name}&nbsp;&nbsp;&nbsp;
-			发表时间：<fmt:formatDate value="${article.created}" pattern="yyyy-MM-dd"/> 
+			发表时间：<fmt:formatDate value="${article.created}" pattern="yyyy-MM-dd"/> &nbsp;&nbsp;&nbsp;
+			浏览次数：${article.hits+1}
 			</h5>
 			
 		</div>

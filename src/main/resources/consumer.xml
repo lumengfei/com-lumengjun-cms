@@ -50,7 +50,7 @@
 	<!-- 记得修改主题 -->
 	<bean id="containerProperties" class="org.springframework.kafka.listener.ContainerProperties">
 		<!-- 构造函数 就是 主题的参数值 -->
-		<constructor-arg value="article" />
+		<constructor-arg value="lumengjun" />
 		<!-- 要在此处声明自己定义的监听器的类 -->
 		<property name="messageListener" ref="msgListener" />
 	</bean>

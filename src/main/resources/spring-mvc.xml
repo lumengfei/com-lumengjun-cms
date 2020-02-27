@@ -40,8 +40,8 @@
 			<mvc:exclude-mapping path="/resource/**"/>
 			<mvc:exclude-mapping path="/index/**"/>
 			<bean class="com.lumengjun.web.CmsInterceptor"></bean>
-			<bean class="com.lumengjun.web.TokenInterceptor"></bean>
-		</mvc:interceptor>  -->
+			<bean class="com.lumengjun.web.TokenInterceptor"></bean> 
+		</mvc:interceptor>   -->
 	
 	<!-- 上传下载配置 -->	
 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">

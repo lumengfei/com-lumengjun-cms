@@ -152,6 +152,18 @@ public interface ArticleMapper {
 	
 	List<Article> list_Article();
 
+	List<Article> getArticleList();
+
+	@Update("UPDATE cms_article SET hits=#{hist} WHERE id=#{id}")
+	void updatehits(@Param("id")Integer id,@Param("hist") int hist);
+
+	@Select("SELECT hits FROM cms_article WHERE id=#{value}")
+	int gethits(Integer id);
+
+	List<Article> getHotart();
+
+	
+
 	
 
 }

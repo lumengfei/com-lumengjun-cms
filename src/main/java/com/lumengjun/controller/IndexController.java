@@ -1,8 +1,16 @@
 package com.lumengjun.controller;
 
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
+
+
+
+
+
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
@@ -33,7 +41,7 @@ public class IndexController {
 	ArticleService  articleService;
 	
 	@Autowired
-	RedisTemplate redisTemplate;
+	RedisTemplate<String, Article> redisTemplate;
 	
 	@Autowired
 	ArticleRep articleRep;
@@ -41,6 +49,87 @@ public class IndexController {
 	
 	@Autowired
 	ElasticsearchTemplate elasticsearchTemplate;
+	
+	
+	@RequestMapping("hotarticle")
+	public String hotarticle(@RequestParam(defaultValue="1")Integer page,@RequestParam(defaultValue="3")Integer pagesize,HttpServletRequest request){
+		System.out.println("sssssssssssssssssssssssssssssssssssssssssssssssssss");
+		//判断Redis中有无数据
+		List<Article> range = redisTemplate.opsForList().range("redis_hos", 0, -1);
+		System.out.println(range);
+		System.out.println(1);
+		if(range==null||range.size()==0){
+			System.out.println(2);
+			//没有的话从Mysql中查
+			List<Article> list=articleService.getHotart();
+			//存入Redis中
+			for (Article article : list) {
+				redisTemplate.opsForList().leftPush("redis_hos", article);
+			}
+			//设置过期时间
+			redisTemplate.expire("redis_hos", 5, TimeUnit.MINUTES);
+			
+		}
+		System.out.println(3);
+		List<Article> list = redisTemplate.opsForList().range("redis_hos", (page-1)*pagesize, ((page-1)*pagesize)+(pagesize-1));
+		request.setAttribute("list", list);
+		return "hotart";
+		
+	}
+	
+	
+	@RequestMapping("list")
+	public String list(String key,@RequestParam(defaultValue="1")Integer page,HttpServletRequest request){
+		
+		long start = System.currentTimeMillis();
+		request.setAttribute("key", key);
+		
+		PageInfo<Article> articlepage = (PageInfo<Article>) HLUtils.findByHighLight(elasticsearchTemplate, Article.class, page, 1, new String[]{"title"}, "id", key);
+		/*int prePage=articlepage.getPageNum()-1>1?articlepage.getPageNum()-1:1;*/
+		
+		request.setAttribute("info", articlepage);
+		long end = System.currentTimeMillis();
+		
+		request.setAttribute("haoshi", (end-start));
+		return "/article/list";
+	}
+
+	
+	
+	
+	
+	
+	/**
+	 * 
+	 * @param key 搜索的信息
+	 * @param page 当前页
+	 * @param request
+	 * @return 一个list页面
+	 *//*
+	@RequestMapping("list")
+	public String indexlist(String key,@RequestParam(defaultValue="1")int page,HttpServletRequest request){
+		//获取一个时间对象
+		Date date = new Date();
+		//获取开始时间
+		long time = date.getTime();
+		request.setAttribute("key", key);
+		
+		PageInfo<Article> articlepage = (PageInfo<Article>) HLUtils.findByHighLight(elasticsearchTemplate, Article.class, page, 5, new String[]{"title"}, "id", key);
+		
+		request.setAttribute("pageinfo", articlepage);
+		//获取结束时间
+		long time2 = date.getTime();
+		//将消耗时间发送前台        结束时间 - 开始时间
+		request.setAttribute("time", (time2-time));
+		return "list";
+	}*/
+	
+	
+	
+	
+	
+	
+	
 	
 	@PostMapping("index")
 	public String index(String key,HttpServletRequest request,@RequestParam(defaultValue="1")Integer page){

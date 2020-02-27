@@ -98,6 +98,8 @@
 				<li class="nav-item"><a class="nav-link" href="#"
 					onclick="showWork($(this),'/article/postArticle')">发表文章</a></li>
 				<li class="nav-item"><a class="nav-link" href="#"
+					onclick="showWork($(this),'/article/shoucangjia')">我的收藏夹</a></li>
+				<li class="nav-item"><a class="nav-link" href="#"
 					onclick="showWork($(this),'/article/comment')">我的评论</a></li>
 				<li class="nav-item"><a class="nav-link disabled" href="#"
 					tabindex="-1" aria-disabled="true"

@@ -94,4 +94,10 @@
     SELECT * FROM cms_article WHERE status=1 AND  deleted=0
     </select>
     
+    <select id="getArticleList" resultMap="articleMapper">
+    SELECT * FROM cms_article WHERE status=1 AND  deleted=0
+    </select>
+    <select id="getHotart" resultMap="articleMapper">
+     SELECT * FROM cms_article WHERE status=1 AND  deleted=0 AND hot=1
+    </select>
   </mapper>
